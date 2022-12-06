@@ -25,9 +25,9 @@ publish_binary(
   target_framework = "net6.0",
   self_contained = True,
   runtime_identifier = "linux-x64",
-  runtime_packs = select({
-    "@rules_dotnet//dotnet:rid_linux-x64": [ "@paket.main//microsoft.netcore.app.runtime.linux-x64" ],
-  }),
+  runtime_packs = [
+    "@paket.main//microsoft.netcore.app.runtime.linux-x64",
+  ],
 )
 
 pkg_tar(
@@ -56,9 +56,9 @@ publish_binary(
   target_framework = "net6.0",
   self_contained = True,
   runtime_identifier = "alpine-x64",
-  runtime_packs = select({
-    "@rules_dotnet//dotnet:rid_linux-x64": [ "@paket.main//microsoft.netcore.app.runtime.linux-musl-x64" ],
-  }),
+  runtime_packs = [
+    "@paket.main//microsoft.netcore.app.runtime.linux-musl-x64",
+  ],
 )
 
 pkg_tar(
