@@ -4,6 +4,3 @@ storage: none
 framework: net6.0, netstandard2.1
 
 nuget FSharp.Core 6
-nuget Microsoft.NetCore.App.Ref 6
-nuget Microsoft.NetCore.App.Runtime.linux-x64 6
-nuget Microsoft.NetCore.App.Runtime.linux-musl-x64 6

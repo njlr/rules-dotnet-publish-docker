@@ -1,6 +1,6 @@
-load("@io_bazel_rules_docker//container:container.bzl", "container_image")
-load("@rules_pkg//:pkg.bzl", "pkg_tar")
 load("@rules_dotnet//dotnet:defs.bzl", "fsharp_binary", "publish_binary")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_tarball")
+load("@rules_pkg//:pkg.bzl", "pkg_tar")
 
 fsharp_binary(
   name = "app",
@@ -11,7 +11,6 @@ fsharp_binary(
     "net6.0",
   ],
   deps = [
-    "@paket.main//microsoft.netcore.app.ref",
     "@paket.main//fsharp.core",
   ],
   visibility = [
@@ -25,9 +24,6 @@ publish_binary(
   target_framework = "net6.0",
   self_contained = True,
   runtime_identifier = "linux-x64",
-  runtime_packs = [
-    "@paket.main//microsoft.netcore.app.runtime.linux-x64",
-  ],
 )
 
 pkg_tar(
@@ -39,15 +35,18 @@ pkg_tar(
   include_runfiles = True,
 )
 
-container_image(
+oci_image(
   name = "image_debian",
-  base = "@dotnet_runtime_deps_6_0_10//image",
-  directory = "/home",
-  workdir = "/home",
-  entrypoint = "/home/app",
-  tars = [
-    ":app_linux_x64_archive",
-  ],
+  base = "@dotnet_runtime_deps_6_0_10",
+  tars = [ ":app_linux_x64_archive" ],
+  entrypoint = [ "/app" ],
+  tags = [ "manual" ],
+)
+
+oci_tarball(
+  name = "image_debian_tarball",
+  image = ":image_debian",
+  repo_tags = [ "image_debian:latest" ],
 )
 
 publish_binary(
@@ -56,9 +55,6 @@ publish_binary(
   target_framework = "net6.0",
   self_contained = True,
   runtime_identifier = "alpine-x64",
-  runtime_packs = [
-    "@paket.main//microsoft.netcore.app.runtime.linux-musl-x64",
-  ],
 )
 
 pkg_tar(
@@ -66,17 +62,21 @@ pkg_tar(
   srcs = [
     ":app_alpine_x64",
   ],
-  strip_prefix = "app_alpine_x64/publish/alpine-x64",
+  # strip_prefix = "app_alpine_x64/publish/linux-alpine-x64",
+  strip_prefix = "app_alpine_x64/publish/linux-musl-x64",
   include_runfiles = True,
 )
 
-container_image(
+oci_image(
   name = "image_alpine",
-  base = "@dotnet_runtime_deps_alpine_3_16//image",
-  directory = "/home",
-  workdir = "/home",
-  entrypoint = "/home/app",
-  tars = [
-    ":app_alpine_x64_archive",
-  ],
+  base = "@dotnet_runtime_deps_alpine_3_16",
+  tars = [ ":app_alpine_x64_archive" ],
+  entrypoint = [ "/app" ],
+  tags = [ "manual" ],
+)
+
+oci_tarball(
+  name = "image_alpine_tarball",
+  image = ":image_alpine",
+  repo_tags = [ "image_alpine:latest" ],
 )

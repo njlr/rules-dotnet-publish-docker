@@ -1,0 +1,36 @@
+bazel_dep(name = "rules_pkg", version = "0.10.1")
+
+bazel_dep(name = "rules_dotnet", version = "0.15.1")
+
+dotnet = use_extension("@rules_dotnet//dotnet:extensions.bzl", "dotnet")
+dotnet.toolchain(dotnet_version = "6.0.200")
+
+use_repo(dotnet, "dotnet_toolchains")
+
+register_toolchains("@dotnet_toolchains//:all")
+
+main_extension = use_extension("//paket:paket.main_extension.bzl", "main_extension")
+
+use_repo(main_extension, "paket.main")
+
+bazel_dep(name = "rules_oci", version = "1.7.5")
+
+oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
+
+oci.pull(
+  name = "dotnet_runtime_deps_6_0_10",
+  image = "mcr.microsoft.com/dotnet/runtime-deps",
+  digest = "sha256:24554fadd483d8305974ded44bb1dbe4916e2f02500b9e2d78e7beb557cfebd0",
+  platforms = [ "linux/amd64" ],
+)
+
+use_repo(oci, "dotnet_runtime_deps_6_0_10")
+
+oci.pull(
+  name = "dotnet_runtime_deps_alpine_3_16",
+  image = "mcr.microsoft.com/dotnet/runtime-deps",
+  digest = "sha256:3a4197e1da3bb5e5a97bdfa062ae0e4a55150cfe023d101a2e8cf107a6ac2be3",
+  platforms = [ "linux/amd64" ],
+)
+
+use_repo(oci, "dotnet_runtime_deps_alpine_3_16")

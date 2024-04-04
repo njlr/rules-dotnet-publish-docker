@@ -3,6 +3,3 @@ RESTRICTION: || (== net6.0) (== netstandard2.1)
 NUGET
   remote: https://api.nuget.org/v3/index.json
     FSharp.Core (6.0)
-    Microsoft.NETCore.App.Ref (6.0)
-    Microsoft.NETCore.App.Runtime.linux-musl-x64 (6.0)
-    Microsoft.NETCore.App.Runtime.linux-x64 (6.0)
